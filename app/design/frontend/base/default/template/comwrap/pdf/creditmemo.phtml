@@ -1,0 +1,235 @@
+<?php
+/**
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ *
+ * @license GPL 2.0
+ * @package Comwrap/Pdf/Templates
+ * @author Thomas Spigel <tspigel@comwrap.com>
+ * @version 1.0
+ *
+ * @var $this Comwrap_Pdf_Block_Creditmemo
+ */
+$imageUrl = Mage::getStoreConfig('sales/identity/logo', $store);
+if ($imageUrl) {
+	$image = Mage::getBaseUrl('media') . '/sales/store/logo/' . $image;
+}
+$i = 0;
+?>
+
+<head>
+	<style type="text/css">
+		body {
+			font-size: 14px;
+			font-family: "linlibertine";
+		}
+		table
+		{
+			width: 100%;
+			border: 1px solid #737373;
+			padding: 0;
+		}
+		table tr:first-child td:first-child { border-left: 0; border-top: 0; padding:5px 10px;}
+		table td
+		{
+			padding: 10px;
+		}
+		.border-right
+		{
+			border-right: 1px solid #737373;
+		}
+		.border-bottom
+		{
+			border-bottom: 1px solid #737373;
+		}
+		.header table td
+		{
+			font-size: 13px;
+			padding: 1px;
+			color: white;
+		}
+		.no-border
+		{
+			border: 0;
+		}
+		thead tr th
+		{
+			font-weight: bold;
+			padding: 10px;
+		}
+		#track td, #track th
+		{
+			padding: 1px 80px 1px 5px;
+			font-size: 12px;
+		}
+
+		.products td {
+			padding: 6px;
+			height: 10px;
+		}
+
+		.products-head {
+			padding: 6px !important;
+			height: 10px;
+
+		}
+
+		.products-head td {
+			font-weight: normal !important;
+			padding: 6px !important;
+			height: 10px;
+		}
+
+		.totals td {
+			font-size: 16px;
+			font-weight: bold;
+			padding: 6px;
+			padding-right: 0px;
+		}
+	</style>
+</head>
+<body>
+
+<?php /* @var $_creditmemo Mage_Sales_Model_Order_Invoice */ ?>
+<?php foreach($this->getCreditmemo() as $_creditmemo):?>
+	<?php $this->startEmulateEnvironment($_creditmemo->getStoreId()); ?>
+	<?php if($i > 0) : ?>
+		<pagebreak />
+	<?php endif;?>
+	<?php
+
+	$this->setOrder($_creditmemo->getOrder());
+	$_date = new Zend_Date($_creditmemo->getOrder()->getCreatedAt());
+	?>
+
+	<?php if($imageUrl):?>
+	<div>
+		<div style="float: left; padding-bottom: 3mm"><img width="2.6in" src="<?php echo $image?>" /></div>
+	</div>
+	<?php endif;?>
+
+	<table cellpadding="0" cellspacing="0">
+		<tr style="background-color: #737373;">
+			<td class="header" colspan="2">
+				<table>
+					<tr>
+						<td><?php echo Mage::helper('sales')->__('Packingslip # ')?></td>
+						<td><?php echo $_creditmemo->getIncrementId()?></td>
+					</tr>
+					<tr>
+						<td><?php echo Mage::helper('sales')->__('Order # ')?></td>
+						<td><?php echo $_creditmemo->getOrder()->getIncrementId()?></td>
+					</tr>
+					<tr>
+						<td><?php echo Mage::helper('sales')->__('Order Date: ')?></td>
+						<td><?php echo $_date->get(Mage::app()->getLocale()->getDateFormat('medium'));?></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr style="background-color: #eeebeb">
+			<th style="padding: 10px; text-align: left; width: 50%" class="border-bottom border-right"><?php echo Mage::helper('sales')->__('Sold to:'); ?></th>
+			<th style="padding: 10px; text-align: left; width: 50%" class="border-bottom"><?php echo Mage::helper('sales')->__('Ship to:'); ?></th>
+		</tr>
+		<tr>
+			<td><p class="address-info"><?php echo $_creditmemo->getBillingAddress()->format('html');?></p></td>
+			<td><p class="address-info"><?php echo $_creditmemo->getShippingAddress()->format('html');?></p></td>
+		</tr>
+	</table>
+	<br/>
+	<table cellpadding="0" cellspacing="0">
+		<thead>
+		<tr style="background-color: #eeebeb">
+			<th class="border-bottom border-right" style="text-align: left; width: 50%;"><?php echo Mage::helper('sales')->__('Payment Method: '); ?></th>
+			<th class="border-bottom" style="text-align: left; width: 50%;"><?php echo Mage::helper('sales')->__('Shipping Method: '); ?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><?php echo $this->getChildHtml('order_payment'); ?></td>
+			<td>
+				<?php if ($_creditmemo->getOrder()->getShippingDescription()): ?>
+					<?php echo $this->escapeHtml($_creditmemo->getOrder()->getShippingDescription()) ?>
+
+					<?php if ($this->helper('tax')->displayShippingPriceIncludingTax()): ?>
+						<?php $_excl = $this->displayShippingPriceInclTax($_creditmemo->getOrder()); ?>
+					<?php else: ?>
+						<?php $_excl = $this->helper('adminhtml/sales')->displayPriceAttribute($_creditmemo->getOrder(), 'shipping_amount', false, ' '); ?>
+					<?php endif; ?>
+					<?php $_incl = $this->displayShippingPriceInclTax($_creditmemo->getOrder()); ?>
+					<br/>(<?php echo $this->helper('sales')->__('Total Shipping Charges');?> <?php echo $_excl?>)
+				<?php else: ?>
+					<?php echo $this->helper('sales')->__('No shipping information available'); ?>
+				<?php endif; ?>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+	<br/>
+	<br/>
+	<table class="no-border products" cellpadding="0" cellspacing="0">
+		<thead>
+		<tr class="products-head" style="background-color: #eeebeb">
+			<td style="border: 1px solid #737373; border-right: 0;"><?php echo Mage::helper('sales')->__('Products'); ?></td>
+			<td style="border: 1px solid #737373; text-align: right; border-left: 0; border-right: 0;"><?php echo Mage::helper('sales')->__('SKU'); ?></td>
+			<td style="border: 1px solid #737373; text-align: right; border-left: 0; border-right: 0;"><?php echo Mage::helper('sales')->__('Total(ex)'); ?></td>
+			<td style="border: 1px solid #737373; text-align: right; border-left: 0; border-right: 0;"><?php echo Mage::helper('sales')->__('Discount'); ?></td>
+			<td style="border: 1px solid #737373; text-align: right; border-left: 0; border-right: 0;"><?php echo Mage::helper('sales')->__('Qty'); ?></td>
+			<td style="border: 1px solid #737373; text-align: right; border-left: 0; border-right: 0;"><?php echo Mage::helper('sales')->__('Tax'); ?></td>
+			<td style="border: 1px solid #737373; text-align: right; border-left: 0;"><?php echo Mage::helper('sales')->__('Total(inc)'); ?></td>
+		</tr>
+		</thead>
+		<tbody>
+		<?php /* @var $_item Mage_Sales_Model_Order_Creditmemo_Item */?>
+		<?php foreach($_creditmemo->getAllItems() as $_item): ?>
+
+			<tr>
+				<td><?php echo $_item->getName() ?></td>
+				<td style="text-align: right;"><?php echo $_item->getSku() ?></td>
+				<td style="text-align: right; font-weight: bold;"><?php echo Mage::helper('core')->currency($_item->getPrice())?></td>
+				<td style="text-align: right; font-weight: bold;"><?php echo Mage::helper('core')->currency($_item->getDiscountAmount())?></td>
+				<td style="text-align: right; font-weight: bold;"><?php echo (int)$_item->getQty() ?></td>
+				<td style="text-align: right; font-weight: bold;"><?php echo Mage::helper('core')->currency($_item->getTaxAmount())?></td>
+				<td style="text-align: right; font-weight: bold;"><?php echo Mage::helper('core')->currency($_item->getPriceInclTax())?></td>
+			</tr>
+		<?php endforeach; ?>
+		</tbody>
+	</table>
+	<br />
+	<br /><br />
+	<table class="no-border totals" style="page-break-inside: avoid" cellpadding="0" cellspacing="0">
+		<tbody>
+		<tr>
+			<td style="width: 60%">&nbsp;</td>
+			<td style="text-align: right; width: 25%;">Subtotal:</td>
+			<td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_creditmemo->getSubtotal())?></td>
+		</tr>
+		<tr>
+			<td style="width: 70%">&nbsp;</td>
+			<td style="text-align: right; width: 25%;">Shipping & Handling:</td>
+			<td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_creditmemo->getShippingInclTax())?></td>
+		</tr>
+		<tr>
+			<td style="width: 70%">&nbsp;</td>
+			<td style="text-align: right; width: 25%;">Grand Total:</td>
+			<td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_creditmemo->getGrandTotal())?></td>
+		</tr>
+		</tbody>
+	</table>
+	<?php ++$i;?>
+	<?php $this->stopEmulateEnvironment();?>
+<?php endforeach;?>
+</body>

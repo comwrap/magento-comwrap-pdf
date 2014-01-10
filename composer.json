@@ -1,0 +1,23 @@
+{
+    "name": "comwrap/magento-comwrap-pdf",
+    "type": "magento-module",
+    "license":"GPL v2.0",
+    "description":"This module replaces the Zend_Pdf method of creating the pdf files with mPDF (html + css support)",
+    "authors":[
+        {
+            "name":"Thomas Spigel",
+            "email":"tspigel@comwrap.com"
+        }
+    ],
+    "require": {
+        "magento-hackathon/magento-composer-installer": "*"
+    },
+    "extra": {
+        "map": [
+            ["app/etc/modules/Comwrap_Pdf.xml", "app/etc/modules/Comwrap_Pdf.xml"],
+            ["app/code/local/Comwrap/Pdf", "app/code/local/Comwrap/Pdf"],
+            ["app/design/frontend/base/default/template/comwrap/pdf", "app/design/frontend/base/default/template/comwrap/pdf"],
+	        ["app/design/frontend/base/default/layout/comwrap/pdf.xml", "app/design/frontend/base/default/layout/comwrap/pdf.xml"]
+        ]
+    }
+}

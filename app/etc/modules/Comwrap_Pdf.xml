@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Comwrap_Pdf>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Comwrap_Pdf>
+    </modules>
+</config>

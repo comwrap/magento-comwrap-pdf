@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <comwrap_pdf_invoice>
+        <block name="comwrap.pdf.invoice" type="comwrap_pdf/invoice" template="comwrap/pdf/invoice.phtml">
+            <block type="adminhtml/sales_order_payment" name="order_payment"/>
+        </block>
+    </comwrap_pdf_invoice>
+    <comwrap_pdf_shipment>
+        <block name="comwrap.pdf.shipment" type="comwrap_pdf/shipment" template="comwrap/pdf/shipment.phtml">
+            <block type="adminhtml/sales_order_payment" name="order_payment"/>
+        </block>
+    </comwrap_pdf_shipment>
+    <comwrap_pdf_creditmemo>
+        <block name="comwrap.pdf.creditmemo" type="comwrap_pdf/creditmemo" template="comwrap/pdf/creditmemo.phtml">
+            <block type="adminhtml/sales_order_payment" name="order_payment"/>
+        </block>
+    </comwrap_pdf_creditmemo>
+</layout>

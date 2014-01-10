@@ -1,0 +1,258 @@
+<?php
+/**
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ *
+ * @license GPL 2.0
+ * @package Comwrap/Pdf/Templates
+ * @author Thomas Spigel <tspigel@comwrap.com>
+ * @version 1.0
+ *
+ * @var $this Comwrap_Pdf_Block_Invoice
+ */
+$imageUrl = Mage::getStoreConfig('sales/identity/logo', $store);
+if ($imageUrl) {
+	$image = Mage::getBaseUrl('media') . '/sales/store/logo/' . $imageUrl;
+}
+$i = 0;
+?>
+
+<head>
+	<style type="text/css">
+		body {
+			font-size: 14px;
+			font-family: "linlibertine";
+		}
+		table
+		{
+			width: 100%;
+			border: 1px solid #737373;
+			padding: 0;
+		}
+		table tr:first-child td:first-child { border-left: 0; border-top: 0; padding:5px 10px;}
+		table td
+		{
+			padding: 10px;
+		}
+		.border-right
+		{
+			border-right: 1px solid #737373;
+		}
+		.border-bottom
+		{
+			border-bottom: 1px solid #737373;
+		}
+		.header table td
+		{
+			font-size: 13px;
+			padding: 1px;
+			color: white;
+		}
+		.no-border
+		{
+			border: 0;
+		}
+		thead tr th
+		{
+			font-weight: bold;
+			padding: 10px;
+		}
+		#track td, #track th
+		{
+			padding: 1px 80px 1px 5px;
+			font-size: 12px;
+		}
+
+		.products td {
+			padding: 6px;
+			height: 10px;
+			vertical-align: top;
+		}
+
+		.products-head {
+			padding: 6px !important;
+			height: 10px;
+			background-color: #eeebeb;
+		}
+
+		.products-head td {
+			border: 1px solid #737373;
+			font-weight: normal !important;
+			padding: 6px !important;
+			height: 10px;
+		}
+
+		.totals td {
+			font-size: 16px;
+			font-weight: bold;
+			padding: 6px;
+			padding-right: 0px;
+		}
+
+		.product-options {
+			font-size: 12px;
+		}
+	</style>
+</head>
+<body>
+
+<?php /* @var $_invoice Mage_Sales_Model_Order_Invoice */ ?>
+<?php foreach($this->getInvoice() as $_invoice):?>
+	<?php $this->startEmulateEnvironment($_invoice->getStoreId());?>
+	<?php if($i > 0) : ?>
+		<pagebreak />
+	<?php endif;?>
+	<?php
+
+	$this->setOrder($_invoice->getOrder());
+	$_date = new Zend_Date($_invoice->getOrder()->getCreatedAt());
+	?>
+
+	<?php if($imageUrl): ?>
+	<div>
+		<div style="float: left; padding-bottom: 3mm"><img width="2.6in" src="<?php echo $image?>" /></div>
+	</div>
+	<?php endif;?>
+
+	<table cellpadding="0" cellspacing="0">
+		<tr style="background-color: #737373;">
+			<td class="header" colspan="2">
+				<table>
+					<tr>
+						<td><?php echo $this->__('Invoice # ')?></td>
+						<td><?php echo $_invoice->getIncrementId()?></td>
+					</tr>
+					<tr>
+						<td><?php echo $this->__('Order # ')?></td>
+						<td><?php echo $_invoice->getOrder()->getIncrementId()?></td>
+					</tr>
+					<tr>
+						<td><?php echo $this->__('Order Date: ')?></td>
+						<td><?php echo $_date->get(Mage::app()->getLocale()->getDateFormat('medium'));?></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr style="background-color: #eeebeb">
+			<th style="padding: 10px; text-align: left; width: 50%" class="border-bottom border-right"><?php echo $this->__('Sold to:'); ?></th>
+			<th style="padding: 10px; text-align: left; width: 50%" class="border-bottom"><?php echo $this->__('Ship to:'); ?></th>
+		</tr>
+		<tr>
+			<td><p class="address-info"><?php echo $_invoice->getBillingAddress()->format('html');?></p></td>
+			<td><p class="address-info"><?php echo $_invoice->getShippingAddress()->format('html');?></p></td>
+		</tr>
+	</table>
+	<br/>
+	<table cellpadding="0" cellspacing="0">
+		<thead>
+		<tr style="background-color: #eeebeb">
+			<th class="border-bottom border-right" style="text-align: left; width: 50%;"><?php echo $this->__('Payment Method: '); ?></th>
+			<th class="border-bottom" style="text-align: left; width: 50%;"><?php echo $this->__('Shipping Method: '); ?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><?php echo $this->getChildHtml('order_payment'); ?></td>
+			<td>
+				<?php if ($_invoice->getOrder()->getShippingDescription()): ?>
+					<?php echo $this->escapeHtml($_invoice->getOrder()->getShippingDescription()) ?>
+
+					<?php if ($this->helper('tax')->displayShippingPriceIncludingTax()): ?>
+						<?php $_excl = $this->displayShippingPriceInclTax($_invoice->getOrder()); ?>
+					<?php else: ?>
+						<?php $_excl = $this->helper('adminhtml/sales')->displayPriceAttribute($_invoice->getOrder(), 'shipping_amount', false, ' '); ?>
+					<?php endif; ?>
+					<?php $_incl = $this->displayShippingPriceInclTax($_invoice->getOrder()); ?>
+					<br/>(<?php echo $this->helper('sales')->__('Total Shipping Charges');?> <?php echo $_excl?>)
+				<?php else: ?>
+					<?php echo $this->helper('sales')->__('No shipping information available'); ?>
+				<?php endif; ?>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+	<br/>
+	<br/>
+	<table class="no-border products" cellpadding="0" cellspacing="0">
+		<thead>
+		<tr class="products-head">
+			<td style="border-right: 0;"><?php echo $this->__('Products'); ?></td>
+			<td style="text-align: right; border-left: 0; border-right: 0;"><?php echo $this->__('SKU'); ?></td>
+			<td style="text-align: right; border-left: 0; border-right: 0;"><?php echo $this->__('Price'); ?></td>
+			<td style="text-align: right; border-left: 0; border-right: 0;"><?php echo $this->__('Qty'); ?></td>
+			<td style="text-align: right; border-left: 0; border-right: 0;"><?php echo $this->__('Tax'); ?></td>
+			<td style="text-align: right; border-left: 0; "><?php echo $this->__('Subtotal'); ?></td>
+		</tr>
+		</thead>
+		<tbody>
+		<?php /* @var $_item Mage_Sales_Model_Order_Invoice_Item */?>
+		<?php foreach($_invoice->getAllItems() as $_item): ?>
+			<?php if($continue) {
+				$continue = false;
+				continue;
+			} ?>
+			<tr>
+				<?php $productOptions = $_item->getOrderItem()->getProductOptions();
+				if(!empty($productOptions['attributes_info'])):?>
+					<?php $continue = true;?>
+					<td>
+						<?php echo $_item->getName();?>
+						<?php foreach($productOptions['attributes_info'] as $productOption):?>
+							<br />
+							<span class="product-options">
+								<i><?php echo $productOption['label']?></i><br />
+								&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $productOption['value'];?>
+							</span>
+						<?php endforeach;?>
+					</td>
+				<?php else: ?>
+					<td><?php echo $_item->getName() ?></td>
+				<?php endif;?>
+
+				<td style="text-align: right;"><?php echo $_item->getSku() ?></td>
+				<td style="text-align: right; font-weight: bold;"><?php echo Mage::helper('core')->currency($_item->getPrice())?></td>
+				<td style="text-align: right;"><?php echo (int)$_item->getQty() ?></td>
+				<td style="text-align: right; font-weight: bold;"><?php echo Mage::helper('core')->currency($_item->getTaxAmount())?></td>
+				<td style="text-align: right; font-weight: bold;"><?php echo Mage::helper('core')->currency($_item->getPriceInclTax())?></td>
+			</tr>
+		<?php endforeach; ?>
+		</tbody>
+	</table>
+	<br />
+	<br /><br />
+	<table class="no-border totals" style="" cellpadding="0" cellspacing="0">
+		<tbody>
+		<tr>
+			<td style="width: 60%">&nbsp;</td>
+			<td style="text-align: right; width: 25%;"><?php echo $this->__('Subtotal');?>:</td>
+			<td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getSubtotal())?></td>
+		</tr>
+		<tr>
+			<td style="width: 70%">&nbsp;</td>
+			<td style="text-align: right; width: 25%;"><?php echo $this->__('Shipping & Handling')?>:</td>
+			<td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getShippingInclTax())?></td>
+		</tr>
+		<tr>
+			<td style="width: 70%">&nbsp;</td>
+			<td style="text-align: right; width: 25%;"><?php echo $this->__('Grand Total')?>:</td>
+			<td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getGrandTotal())?></td>
+		</tr>
+		</tbody>
+	</table>
+	<?php ++$i;?>
+	<?php $this->stopEmulateEnvironment();?>
+<?php endforeach;?>
+	</body>
