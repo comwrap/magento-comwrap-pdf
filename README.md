@@ -23,7 +23,7 @@ You have two ways to install it: with composer or manually.
 
 With composer, add this code to your composer.json in your magento root:
 
-```
+```json
   {
     "minimum-stability":"dev",
     "require":{
@@ -53,6 +53,6 @@ If you want to install it manually, copy the files to design and code respective
 
 Please take a look first on the [mPDF manual](http://mpdf1.com/manual/index.php) to see what's supported.
 
-The default template files are located in app/design/frontend/base/default/template/comwrap/pdf/. Edit or override these phtml files in your own theme to match your needs. Every of these templates is getting it's own objects on load. For the invoice you can get the array of objects with $this->getInvoice(), in shipment with $this->getShipment(), and in the creditmemo with $this->getCreditmemo()
+The default template files are located in ``app/design/frontend/base/default/template/comwrap/pdf/``. Edit or override these phtml files in your own theme to match your needs. Every of these templates is getting it's own objects on load. For the invoice you can get the array of objects with ``$this->getInvoice()``, in shipment with ``$this->getShipment()``, and in the creditmemo with ``$this->getCreditmemo()``
 
 
