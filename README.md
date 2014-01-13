@@ -10,7 +10,7 @@ This module is great for projects where pdf files need to be customized, as it g
 
 The module should work 'as-is' and spit out pdfs which look almost like the default magento ones. 
 
-**Current Module version**: 1.1.0
+**Current Module version**: 1.0
 
 **Current mPDF version**: 5.6
 
