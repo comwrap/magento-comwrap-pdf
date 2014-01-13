@@ -1,0 +1,6 @@
+**** VERSION 1.1 - 11.01.2014. ****
+Features:
+    * Upgraded the mPDF library to version 5.7.1 which now has support for QR codes and PHP 5.5. Updated the templates accordingly.
+
+**** VERSION 1.0 - 10.01.2014. ****
+Initial module version. mPDF version 5.6

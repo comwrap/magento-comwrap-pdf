@@ -38,6 +38,7 @@ $i = 0;
 		}
 		table
 		{
+			border-collapse: collapse;
 			width: 100%;
 			border: 1px solid #737373;
 			padding: 0;
@@ -159,8 +160,8 @@ $i = 0;
 		</thead>
 		<tbody>
 		<tr>
-			<td><?php echo $this->getChildHtml('order_payment'); ?></td>
-			<td>
+			<td style="vertical-align: top;"><?php echo $this->getChildHtml('order_payment'); ?></td>
+			<td style="vertical-align: top;">
 				<?php if ($_creditmemo->getOrder()->getShippingDescription()): ?>
 					<?php echo $this->escapeHtml($_creditmemo->getOrder()->getShippingDescription()) ?>
 

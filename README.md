@@ -8,11 +8,11 @@ Comwrap_Pdf is a drop-in-replacement for the standard Zend_Pdf method of generat
 This module is great for projects where pdf files need to be customized, as it gives the possibility for frontend developers to create the design instead, so no more backend development is needed for that matter.
 
 
-The module should work 'as-is' and spit out pdfs which look almost like the default magento ones. 
+The module should work 'as-is' and spit out pdfs which look almost like the default magento ones. Please note that the templates which are included are only a example. If you want a cool fancy nice looking pdf template, you need to style it yourself through html/css3.
 
-**Current Module version**: 1.0
+**Current Module version**: 1.1.0
 
-**Current mPDF version**: 5.6
+**Current mPDF version**: 5.7.1
 
 **Tested under Magento versions**: 1.8.0
 
@@ -22,7 +22,7 @@ The module should work 'as-is' and spit out pdfs which look almost like the defa
   * multistore (multilocale etc) and bulk creation of pdf files from admin
   * configurable/grouped products shown with their options (did not yet test fully with bundled products)
   * layout.xml block configuration
-  * logos, images, barcodes, many css3 options, many html tags
+  * logos, images, barcodes (and qrcodes), many css3 options, many html tags
 
 
 ## Installation
